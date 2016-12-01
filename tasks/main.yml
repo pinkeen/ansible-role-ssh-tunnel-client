@@ -1,0 +1,46 @@
+- name: Create ssh tunnel user
+  user:
+    name: "{{ ssh_tunnel_client_user }}"
+    home: "/home/{{ ssh_tunnel_client_user }}"
+    state: present
+
+- name: Install autossh
+  yum:
+    name: autossh
+    state: present
+
+- name: Create ssh config dir
+  file:
+    dest: "/home/{{ ssh_tunnel_client_user }}/.ssh"
+    state: directory
+    owner: "{{ ssh_tunnel_client_user }}"
+    group: "{{ ssh_tunnel_client_user }}"
+    mode: 0700
+
+- name: Copy tunnel keys
+  copy:
+    src: "{{ item.key_file }}"
+    dest: "/home/{{ ssh_tunnel_client_user }}/.ssh/id_rsa.tunnel.{{ item.name }}"
+    owner: "{{ ssh_tunnel_client_user }}"
+    group: "{{ ssh_tunnel_client_user }}"
+    mode: 0600
+  with_items: "{{ ssh_tunnels }}"
+
+- name: Install service files
+  template:
+    src: service.j2
+    dest: /etc/systemd/system/ssh-tunnel-{{ item.name }}.service
+  with_items: "{{ ssh_tunnels }}"
+  notify: Restart services
+  register: service_files
+
+- name: Reload daemon
+  command: /bin/systemctl daemon-reload
+  when: service_files.changed
+
+- name: Start and enable services
+  service:
+    name: "ssh-tunnel-{{ item.name }}"
+    enabled: yes
+    state: started
+  with_items: "{{ ssh_tunnels }}"

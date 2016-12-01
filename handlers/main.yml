@@ -1,0 +1,5 @@
+- name: Restart services
+  service:
+    name: "ssh-tunnel-{{ item.name }}"
+    state: restarted
+  with_items: "{{ ssh_tunnels }}"

@@ -1,0 +1,16 @@
+[Unit]
+Description=Autho ssh tunnel for {{ item.name }}
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/bin/autossh -M 20000 -C -N {{ item.remote_user }}@{{ item.target_host }} -L {{ item.local_port }}:localhost:{{ item.target_port }} -i '/home/{{ ssh_tunnel_client_user }}/.ssh/id_rsa.tunnel.{{ item.name }}' -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null
+KillMode=process
+Restart=on-failure
+RestartSec=50s
+StandardOutput=syslog
+StandardError=syslog
+User={{ ssh_tunnel_client_user }}
+
+[Install]
+WantedBy=multi-user.target
