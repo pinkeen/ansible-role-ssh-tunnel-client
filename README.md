@@ -9,6 +9,8 @@
  - `target_port` - required
  - `local_port` - required
  - `remote_user` - set to `ssh_tunnel` by default
+ - `alive_interval` - set to `10` by default
+ - `alive_count_max` - set to `1` by default
  
  
 ## Warning
