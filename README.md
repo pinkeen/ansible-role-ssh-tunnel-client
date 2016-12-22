@@ -15,19 +15,19 @@
  
 ## Warning
 
-If you use multiple clients to connect to one server then check that you have autossh
-with version >= 1.4a-1.
+Autossh binds to a monitoring port on the remote machine. A fixed port is used and multiple 
+clients cannot not bind to the same port at the same time what causes the ssh session to be restarted 
+every 10 minutes. 
 
-Ssh binds to a monitoring port on the remote machine. Before the mentioned version a fixed
-port was used and multiple clients could not bind to the same port at the same time
-which caused the ssh session to be restarted every 10 minutes. 
+The port randomization does not work in latest centos 7 version (1.4e) as of this writing.
 
-In later versions this is fixed by randomizing this port. If you still encounter problems
-you can try setting the `ssh_tunnel_client_disable_monitoring` variable to true which basically
-adds the `-M 0` option. 
+That's why the autossh monitoring is turned off.
 
 Even without the monitoring it should work fine, because ssh exits quickly when there is no 
 connection thanks to `-oServerAliveInterval=60 -oServerAliveCountMax=2` options. 
 
 For more info see:
 https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=351162
+
+
+Sidenote: Upon consideration, why do I need autossh then? Won't systemd take care of the restarting?
