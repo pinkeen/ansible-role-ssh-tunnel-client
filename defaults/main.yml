@@ -1,2 +1,3 @@
+ssh_tunnel_client_disable_monitoring: false
 ssh_tunnel_client_user: ssh_tunnel
 ssh_tunnels: []

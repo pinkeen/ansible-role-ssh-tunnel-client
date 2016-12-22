@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/bin/autossh -C -N {{ item.remote_user }}@{{ item.target_host }} -L {{ item.local_port }}:localhost:{{ item.target_port }} -i '/home/{{ ssh_tunnel_client_user }}/.ssh/id_rsa.tunnel.{{ item.name }}' -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oServerAliveInterval=60 -oServerAliveCountMax=2
+ExecStart=/bin/autossh {% if ssh_tunnel_client_disable_monitoring %}-M 0 {% endif %}-C -N {{ item.remote_user }}@{{ item.target_host }} -L {{ item.local_port }}:localhost:{{ item.target_port }} -i '/home/{{ ssh_tunnel_client_user }}/.ssh/id_rsa.tunnel.{{ item.name }}' -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oServerAliveInterval=60 -oServerAliveCountMax=2
 KillMode=process
 Restart=on-failure
 RestartSec=50s
